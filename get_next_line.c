@@ -6,38 +6,51 @@
 /*   By: mavellan <mavellan@student.42barcelona.    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/17 18:06:22 by mavellan          #+#    #+#             */
-/*   Updated: 2024/10/18 13:36:03 by mavellan         ###   ########.fr       */
+/*   Updated: 2024/10/23 20:25:16 by mavellan         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "get_next_line.h"
 
-char	*get_next_line(int fd)
+char *read_first_left_char(int fd,	char *left_str)
 {
-	int		bytes_read;
 	char	*buffer;
-	int		i;
+	int		rd_bytes,
 
-	i = 0;
-	if (fd < 0 || BUFFERS_SIZE <= 0)
-		return (NULL);
-	buffer = malloc(BUFFERS_SIZE + 1);
+	buffer = mallloc((BUFFER_SIZE + 1) * sizeof(char));
 	if (!buffer)
 		return (NULL);
-	bytes_read = read(fd, buffer, BUFFERS_SIZE);
-	if (bytes_read <= 0)
+	rd_bytes = 1;
+	while (!ft_strchr(left_str, '\n') && rd_bytes != 0)
 	{
-		free(buffer);
-		return(NULL);
+		rd_bytes = read(fd, buffer, BUFFER_SIZE);
+		if (rd_bytes == -1)
+		{
+			free(buffer);
+			return(NULL);
+		}
+		buffer[rd_bytes] = '\0';
+		left_str = ft_strjoin(left_str, buffer);
 	}
-	while (bytes_read > i && buffer[i] != '\n')
-	{
-		write(1, &buffer[i], 1);
-		i++;
-	}
-	return (NULL);
+	free(buffer);
+	return (left_str);
 }
 
+char	*get_next_line(int fd)
+{
+	const char	*left_str;
+	char	*line;
+
+	if (fd < 0 || BUFFER_SIZE <= 0)
+		return (NULL);
+	left_str = read_first_left_str(fd, left_str);
+	if (!left_str)
+		return (NULL);
+	line = get_new_line(left_str);
+	left_str = get_new_left_str(left_str);
+	return (line);
+}
+/*
 int	main(void)
 {
 	int	fd;
@@ -53,4 +66,4 @@ int	main(void)
 
 	close(fd); // Cierra el archivo
 	return (0);
-}
+}*/
