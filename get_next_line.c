@@ -6,51 +6,50 @@
 /*   By: mavellan <mavellan@student.42barcelona.    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/17 18:06:22 by mavellan          #+#    #+#             */
-/*   Updated: 2024/10/18 13:36:03 by mavellan         ###   ########.fr       */
+/*   Updated: 2024/10/24 15:46:25 by mavellan         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "get_next_line.h"
+#include <unistd.h>
+#include <fcntl.h>
+
+char	*get_first_line(int fd, char *left_str)
+{
+	char	*buffer;
+	int		bytes_read;
+
+	buffer = malloc((BUFFER_SIZE + 1) * sizeof(char));
+	if (!buffer)
+		return (NULL);
+	bytes_read = 1;
+	while (!ft_strchr(left_str, '\n') && bytes_read != 0)
+	{
+		bytes_read = read(fd, buffer, BUFFER_SIZE);
+		if (bytes_read == -1)
+		{
+			free(buffer);
+			buffer = NULL;
+			return (NULL);
+		}
+		buffer[bytes_read] = '\0';
+		left_str = ft_strjoin(left_str, buffer);
+	}
+	free (buffer);
+	return (left_str);
+}
 
 char	*get_next_line(int fd)
 {
-	int		bytes_read;
-	char	*buffer;
-	int		i;
+	static char	*left_str;
+	char		*line;
 
-	i = 0;
-	if (fd < 0 || BUFFERS_SIZE <= 0)
+	if (fd < 0 || BUFFER_SIZE <= 0)
+		return (0);
+	left_str = get_first_line(fd, left_str);
+	if (!left_str)
 		return (NULL);
-	buffer = malloc(BUFFERS_SIZE + 1);
-	if (!buffer)
-		return (NULL);
-	bytes_read = read(fd, buffer, BUFFERS_SIZE);
-	if (bytes_read <= 0)
-	{
-		free(buffer);
-		return(NULL);
-	}
-	while (bytes_read > i && buffer[i] != '\n')
-	{
-		write(1, &buffer[i], 1);
-		i++;
-	}
-	return (NULL);
-}
-
-int	main(void)
-{
-	int	fd;
-
-	fd = open("test.txt", O_RDONLY); // Abre el archivo "test.txt" en modo solo lectura
-	if (fd == -1)
-	{
-		printf("ERROR");
-		return (1);
-	}
-
-	get_next_line(fd); // Llama a tu función get_next_line, que debería escribir la línea
-
-	close(fd); // Cierra el archivo
-	return (0);
+	line = get_new_line(left_str);
+	left_str = new_left_str(left_str);
+	return (line);
 }
