@@ -6,12 +6,11 @@
 /*   By: mavellan <mavellan@student.42barcelona.    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/28 10:27:13 by mavellan          #+#    #+#             */
-/*   Updated: 2024/10/28 10:28:57 by mavellan         ###   ########.fr       */
+/*   Updated: 2024/10/28 17:10:21 by mavellan         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "get_next_line.h"
-
+#include "get_next_line_bonus.h"
 
 char	*get_first_line(int fd, char *left_str)
 {
